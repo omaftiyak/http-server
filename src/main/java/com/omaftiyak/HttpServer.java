@@ -1,48 +1,52 @@
 package com.omaftiyak;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 
 public class HttpServer {
-    /*public static void writeBedResponce(Socket s, HttpException exception) throws IOException {
-        String str = "HTTP/1.1 " + exception.getExeptionCode() + "\r\n" +
-                "Server: YarServer/2009-09-09\r\n" +
-                "Content-Type: text/html\r\n" +
-                "Content-Length: " + exception.getMessage().length() + "\r\n" +
-                "Connection: close\r\n\r\n" + exception.getMessage();
-        s.getOutputStream().write(str.getBytes());
-        s.getOutputStream().flush();
-    }*/
-    private static BadResponse br;
 
-    public static void main(String[] args) throws IOException {
-        ServerSocket ss;
-        try {
-            // todo low move port number to properties file
-            ss = new ServerSocket(8080);
-            while (true) {
-                Socket s = null;
-                try {
-                    s = ss.accept();
+    private int port;
 
-                    try {
-                        // todo low use java.util.concurrent.ExecutorService
-                        new Thread(new SocketProcessor(s, new TestHandler())).start();
-                    } catch (IOException e1) {
-                        e1 = new HttpException(404, e1.getMessage());
-                        br = new BadResponse((HttpException) e1);
-                        br.showBadResponse(s);
-                    }
-                } catch (HttpException e) {
-                    e = new HttpException(404, e.getMessage());
-                    br = new BadResponse(e);
-                    br.showBadResponse(s);
-                }
-            }
-        } catch (HttpException e) {
-            e.printStackTrace();
+    public HttpServer() {
+        // todo low move port number to properties file
+        port = 8080;
+    }
+
+    private void start() {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            listen(serverSocket);
+        } catch (IOException e1) {
+            e1.printStackTrace();
         }
     }
+
+    private void listen(ServerSocket serverSocket) {
+        while (true) {
+            Socket socket = null;
+            InputStream is = null;
+            OutputStream os = null;
+            try {
+                socket = serverSocket.accept();
+                is = socket.getInputStream();
+                os = socket.getOutputStream();
+                // todo low use java.util.concurrent.ExecutorService instead of Thread
+                new Thread(new SocketProcessor(socket, is, os)).start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                IOUtils.close(socket);
+                IOUtils.close(is);
+                IOUtils.close(os);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        new HttpServer().start();
+    }
+
 }

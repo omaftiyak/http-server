@@ -17,12 +17,12 @@ public class SocketProcessor implements Runnable {
     private RequestHandler handler;
     private BadResponse br;
 
-    public SocketProcessor(Socket s, RequestHandler handler) throws IOException {
+    public SocketProcessor(Socket s, InputStream is, OutputStream os)  {
         this.s = s;
-        this.is = s.getInputStream();
-        this.os = s.getOutputStream();
+        this.is = is;
+        this.os = os;
         parser = new RequestParser();
-        this.handler = handler;
+        this.handler = new TestHandler();
     }
 
     public void run() {
