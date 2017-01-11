@@ -6,6 +6,7 @@ import java.io.IOException;
 public class HttpException extends IOException {
 
     private String message;
+    // todo rename field and getter to statusCode
     private int exeptionCode;
 
     public HttpException(int code, String message) {

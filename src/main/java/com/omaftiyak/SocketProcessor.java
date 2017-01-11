@@ -3,8 +3,10 @@ package com.omaftiyak;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class SocketProcessor implements Runnable {
@@ -15,29 +17,26 @@ public class SocketProcessor implements Runnable {
 
     public SocketProcessor(Socket s) {
         this.socket = s;
-        parser = new RequestParser();
+        this.parser = new RequestParser();
         this.handler = new TestHandler();
     }
 
     public void run() {
         InputStream is = null;
         OutputStream os = null;
-        Response response ;
+        Response response;
         try {
             is = socket.getInputStream();
             os = socket.getOutputStream();
             response = handler.handle(parser.parse(is), os);
-
         } catch (HttpException e) {
-            //???
-            response = buildExceptionResponse(new HttpException(404, e.getMessage()));
-        } catch (IOException e1) {
-            //???
-            response = buildExceptionResponse(new HttpException(500, e1.getMessage()));
+            response = buildExceptionResponse(e);
+        } catch (Exception e) {
+            response = buildExceptionResponse(new HttpException(500, e.getMessage()));
         }
 
         try {
-            writeResponse(response.toString(), os);
+            writeResponse(response, os);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -48,10 +47,20 @@ public class SocketProcessor implements Runnable {
         System.err.println("Client processing finished");
     }
 
-
-    private void writeResponse(String s, OutputStream os) throws IOException {
-        os.write(s.getBytes());
-        os.flush();
+    private void writeResponse(Response response, OutputStream os) throws IOException {
+        PrintWriter printWriter = new PrintWriter(os);
+        printWriter.print(response.getVersion());
+        printWriter.print(response.getStatus());
+        printWriter.print("\r\n");
+        for (Map.Entry<String, String> entry : response.getHeaders().entrySet()) {
+            printWriter.print(entry.getKey());
+            printWriter.print(": ");
+            printWriter.print(entry.getValue());
+            printWriter.print("\r\n");
+        }
+        printWriter.print("\r\n");
+        printWriter.flush();
+        os.write(response.getBody());
     }
 
     private Response buildExceptionResponse(HttpException exception) {
@@ -61,10 +70,7 @@ public class SocketProcessor implements Runnable {
         headers.put("Content-Type", "text/html");
         headers.put("Content-Length:", Integer.toString(s.length()));
         headers.put("Connection", "close");
-        return new Response("HTTP/1.1", Integer.toString(exception.getExeptionCode()), headers, s);
+        return new Response("HTTP/1.1", Integer.toString(exception.getExeptionCode()), headers, s.getBytes());
     }
 
-
 }
-
-

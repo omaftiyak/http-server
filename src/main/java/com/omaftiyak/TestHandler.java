@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class TestHandler extends RequestHandler {
 
-
+//todo щоб методи повертали те що тримали але текстом
     @Override
     public Response Get() {
         String s = "<html><body><h1>" + "Hello" + "</h1></body></html>";
@@ -14,7 +14,7 @@ public class TestHandler extends RequestHandler {
         headers.put("Content-Type", "text/html");
         headers.put("Content-Length:", Integer.toString(s.length()));
         headers.put("Connection", "close");
-        return new Response("HTTP/1.1", "200 OK", headers, s);
+        return new Response("HTTP/1.1", " 200 OK", headers, s.getBytes());
     }
 
     @Override

@@ -10,7 +10,9 @@ public abstract class RequestHandler {
     private final String GET = "Get";
     private final String PUT = "Put";
     private final String DELETE = "Delete";
-
+    //todo забрати поля
+    //todo використовувати енами для констант http
+    //todo i для хідерів
     protected Request request;
     protected OutputStream os;
 

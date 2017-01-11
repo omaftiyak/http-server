@@ -4,35 +4,25 @@ package com.omaftiyak;
 import java.util.Map;
 
 public class Response {
+
     private String version;
     private String status;
     private Map<String, String> headers;
-    private String bodyMessage;
+    private byte[] body;
 
-    @Override
-    public String toString() {
-        String headers = "";
-        for (Map.Entry<String, String> entry : this.headers.entrySet()) {
-            headers += entry.getKey() + ":\\s" + entry.getValue() + "\r\n";
-        }
-        return version + status + "\r\n"
-                + headers+"\r\n"
-                + bodyMessage;
-    }
-
-    public Response(String version, String status, Map<String, String> headers, String bodyMessage) {
+    public Response(String version, String status, Map<String, String> headers, byte[] body) {
         this.version = version;
         this.status = status;
-        this.bodyMessage = bodyMessage;
+        this.body = body;
         this.headers = headers;
     }
 
-    public String getBodyMessage() {
-        return bodyMessage;
+    public byte[] getBody() {
+        return body;
     }
 
-    public void setBodyMessage(String bodyMessage) {
-        this.bodyMessage = bodyMessage;
+    public void setBody(byte[] body) {
+        this.body = body;
     }
 
     public Map<String, String> getHeaders() {
