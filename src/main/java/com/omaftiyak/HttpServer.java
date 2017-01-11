@@ -1,8 +1,6 @@
 package com.omaftiyak;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -26,27 +24,19 @@ public class HttpServer {
 
     private void listen(ServerSocket serverSocket) {
         while (true) {
-            Socket socket = null;
-            InputStream is = null;
-            OutputStream os = null;
+            Socket socket;
             try {
                 socket = serverSocket.accept();
-                is = socket.getInputStream();
-                os = socket.getOutputStream();
                 // todo low use java.util.concurrent.ExecutorService instead of Thread
-                new Thread(new SocketProcessor(socket, is, os)).start();
+                new Thread(new SocketProcessor(socket)).start();
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                IOUtils.close(socket);
-                IOUtils.close(is);
-                IOUtils.close(os);
             }
         }
     }
 
     public static void main(String[] args) {
-        new HttpServer().start();
+        (new HttpServer()).start();
     }
 
 }

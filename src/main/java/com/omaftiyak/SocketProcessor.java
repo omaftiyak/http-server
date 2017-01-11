@@ -1,66 +1,67 @@
 package com.omaftiyak;
 
-import com.omaftiyak.parsers.RequestParser;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.HashMap;
 
 
 public class SocketProcessor implements Runnable {
 
-    private Socket s;
-    private InputStream is;
-    private OutputStream os;
+    private Socket socket;
     private RequestParser parser;
     private RequestHandler handler;
-    private BadResponse br;
 
-    public SocketProcessor(Socket s, InputStream is, OutputStream os)  {
-        this.s = s;
-        this.is = is;
-        this.os = os;
+    public SocketProcessor(Socket s) {
+        this.socket = s;
         parser = new RequestParser();
         this.handler = new TestHandler();
     }
 
     public void run() {
-
-        Response response = null;
+        InputStream is = null;
+        OutputStream os = null;
+        Response response ;
         try {
-            response = handler.handle(parser.parse(this.s), os);
+            is = socket.getInputStream();
+            os = socket.getOutputStream();
+            response = handler.handle(parser.parse(is), os);
+
+        } catch (HttpException e) {
+            //???
+            response = buildExceptionResponse(new HttpException(404, e.getMessage()));
+        } catch (IOException e1) {
+            //???
+            response = buildExceptionResponse(new HttpException(500, e1.getMessage()));
+        }
+
+        try {
+            writeResponse(response.toString(), os);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        try {
-            writeResponse(response.toString());
-        } catch (IOException e) {
-
-            try {
-                e =new HttpException(404, e.getMessage());
-                br = new BadResponse((HttpException) e);
-                br.showBadResponse(s);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-
         } finally {
-
-            try {
-                s.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+            IOUtils.close(is);
+            IOUtils.close(os);
+            IOUtils.close(socket);
         }
         System.err.println("Client processing finished");
     }
 
 
-    private void writeResponse(String s) throws IOException {
+    private void writeResponse(String s, OutputStream os) throws IOException {
         os.write(s.getBytes());
         os.flush();
+    }
+
+    private Response buildExceptionResponse(HttpException exception) {
+        String s = "<html><body><h1>" + exception.getMessage() + "</h1></body></html>";
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Server", "YarServer/2009-09-09");
+        headers.put("Content-Type", "text/html");
+        headers.put("Content-Length:", Integer.toString(s.length()));
+        headers.put("Connection", "close");
+        return new Response("HTTP/1.1", Integer.toString(exception.getExeptionCode()), headers, s);
     }
 
 

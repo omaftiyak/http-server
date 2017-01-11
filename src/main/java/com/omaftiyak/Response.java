@@ -1,20 +1,28 @@
 package com.omaftiyak;
 
 
+import java.util.Map;
+
 public class Response {
-    private String statusLine;
-    private String headers;
+    private String version;
+    private String status;
+    private Map<String, String> headers;
     private String bodyMessage;
 
     @Override
     public String toString() {
-        return  statusLine
-                + headers
-                + bodyMessage
-                ;
+        String headers = "";
+        for (Map.Entry<String, String> entry : this.headers.entrySet()) {
+            headers += entry.getKey() + ":\\s" + entry.getValue() + "\r\n";
+        }
+        return version + status + "\r\n"
+                + headers+"\r\n"
+                + bodyMessage;
     }
-    public Response(String statusLine, String headers, String bodyMessage) {
-        this.statusLine = statusLine;
+
+    public Response(String version, String status, Map<String, String> headers, String bodyMessage) {
+        this.version = version;
+        this.status = status;
         this.bodyMessage = bodyMessage;
         this.headers = headers;
     }
@@ -27,21 +35,27 @@ public class Response {
         this.bodyMessage = bodyMessage;
     }
 
-    public  String getHeaders() {
+    public Map<String, String> getHeaders() {
         return headers;
     }
 
-    public void setHeaders(String headers) {
+    public void setHeaders(Map<String, String> headers) {
         this.headers = headers;
     }
 
-    public String getStatusLine() {
-        return statusLine;
+    public String getVersion() {
+        return version;
     }
 
-    public void setStatusLine(String statusLine) {
-        this.statusLine = statusLine;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
+    public String getStatus() {
+        return status;
+    }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

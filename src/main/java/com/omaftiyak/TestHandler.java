@@ -1,21 +1,20 @@
 package com.omaftiyak;
 
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.util.HashMap;
 
 public class TestHandler extends RequestHandler {
 
 
-
     @Override
     public Response Get() {
-        String s ="<html><body><h1>" + "Hello" + "</h1></body></html>";
-        Response r = new Response("HTTP/1.1 200 OK\r\n", "Server: YarServer/2009-09-09\r\n" +
-                "Content-Type: text/html\r\n" +
-                "Content-Length: " + s.length() + "\r\n" +
-                "Connection: close\r\n\r\n",s);
-        return r;
+        String s = "<html><body><h1>" + "Hello" + "</h1></body></html>";
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Server", "YarServer/2009-09-09");
+        headers.put("Content-Type", "text/html");
+        headers.put("Content-Length:", Integer.toString(s.length()));
+        headers.put("Connection", "close");
+        return new Response("HTTP/1.1", "200 OK", headers, s);
     }
 
     @Override
