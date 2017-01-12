@@ -28,11 +28,11 @@ public class SocketProcessor implements Runnable {
         try {
             is = socket.getInputStream();
             os = socket.getOutputStream();
-            response = handler.handle(parser.parse(is), os);
+            response = handler.handle(parser.parse(is));
         } catch (HttpException e) {
             response = buildExceptionResponse(e);
         } catch (Exception e) {
-            response = buildExceptionResponse(new HttpException(500, e.getMessage()));
+            response = buildExceptionResponse(new HttpException(HttpError.SC_INTERNAL_SERVER_ERROR));
         }
 
         try {
@@ -64,13 +64,13 @@ public class SocketProcessor implements Runnable {
     }
 
     private Response buildExceptionResponse(HttpException exception) {
-        String s = "<html><body><h1>" + exception.getMessage() + "</h1></body></html>";
+        String s = "<html><body><h1>" + exception.getError().getMessage() + "</h1></body></html>";
         HashMap<String, String> headers = new HashMap<>();
-        headers.put("Server", "YarServer/2009-09-09");
-        headers.put("Content-Type", "text/html");
-        headers.put("Content-Length:", Integer.toString(s.length()));
-        headers.put("Connection", "close");
-        return new Response("HTTP/1.1", Integer.toString(exception.getExeptionCode()), headers, s.getBytes());
+        headers.put(HttpHeader.SERVER.toString(), "YarServer/2009-09-09");
+        headers.put(HttpHeader.CONTENT_TYPE.toString(), "text/html");
+        headers.put(HttpHeader.CONTENT_LENGTH.toString(), Integer.toString(s.length()));
+        headers.put(HttpHeader.CONNECTION.toString(), "close");
+        return new Response("HTTP/1.1", Integer.toString(exception.getError().getNumber()), headers, s.getBytes());
     }
 
 }

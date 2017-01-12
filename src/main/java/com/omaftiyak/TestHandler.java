@@ -2,33 +2,38 @@ package com.omaftiyak;
 
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class TestHandler extends RequestHandler {
 
-//todo щоб методи повертали те що тримали але текстом
     @Override
-    public Response Get() {
-        String s = "<html><body><h1>" + "Hello" + "</h1></body></html>";
+    public Response Get(Request request) {
+        String requestHeaders = "";
+        for (Map.Entry<String, String> entry : request.getHeaders().entrySet()) {
+            requestHeaders = (entry.getKey() + ": " + entry.getValue() + "\r\n");
+        }
+        String s = "<html><body><h1>" + request.getMethod()
+                + " " + request.getURL() + " " + request.getVersion() + requestHeaders + "</h1></body></html>";
         HashMap<String, String> headers = new HashMap<>();
-        headers.put("Server", "YarServer/2009-09-09");
-        headers.put("Content-Type", "text/html");
-        headers.put("Content-Length:", Integer.toString(s.length()));
-        headers.put("Connection", "close");
+        headers.put(HttpHeader.SERVER.toString(), "YarServer/2009-09-09");
+        headers.put(HttpHeader.CONTENT_TYPE.toString(), "text/html");
+        headers.put(HttpHeader.CONTENT_LENGTH.toString(), Integer.toString(s.length()));
+        headers.put(HttpHeader.CONNECTION.toString(), "close");
         return new Response("HTTP/1.1", " 200 OK", headers, s.getBytes());
     }
 
     @Override
-    public Response Post() {
+    public Response Post(Request request) {
         return null;
     }
 
     @Override
-    public Response Put() {
+    public Response Put(Request request) {
         return null;
     }
 
     @Override
-    public Response Delete() {
+    public Response Delete(Request request) {
         return null;
     }
 }

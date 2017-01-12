@@ -18,7 +18,7 @@ public class RequestParser {
                 && str[0].compareToIgnoreCase("get") != 0
                 && str[0].compareToIgnoreCase("put") != 0
                 && str[0].compareToIgnoreCase("delete") != 0) {
-            throw new HttpException(404, "Invalid method's name");
+            throw new HttpException(HttpError.SC_BAD_REQUEST);
         }
 
         Map<String, String> headers = new HashMap<>();

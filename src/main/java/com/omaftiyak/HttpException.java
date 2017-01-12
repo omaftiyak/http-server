@@ -5,29 +5,19 @@ import java.io.IOException;
 
 public class HttpException extends IOException {
 
-    private String message;
-    // todo rename field and getter to statusCode
-    private int exeptionCode;
+   private HttpError error;
 
-    public HttpException(int code, String message) {
-        this.exeptionCode = code;
-        this.message = message;
+    public HttpException(HttpError error) {
+        this.error = error;
     }
 
-    @Override
-    public String getMessage() {
-        return message;
+
+    public HttpError getError() {
+        return error;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setError(HttpError error) {
+        this.error = error;
     }
 
-    public int getExeptionCode() {
-        return exeptionCode;
-    }
-
-    public void setExeptionCode(int exeptionCode) {
-        this.exeptionCode = exeptionCode;
-    }
 }
