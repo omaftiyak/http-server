@@ -18,7 +18,7 @@ public class RequestParser {
                 && str[0].compareToIgnoreCase("get") != 0
                 && str[0].compareToIgnoreCase("put") != 0
                 && str[0].compareToIgnoreCase("delete") != 0) {
-            throw new HttpException(HttpError.SC_BAD_REQUEST);
+            throw new HttpException(HttpStatus.SC_BAD_REQUEST);
         }
 
         Map<String, String> headers = new HashMap<>();

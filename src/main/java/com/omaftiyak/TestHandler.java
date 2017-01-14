@@ -5,9 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TestHandler extends RequestHandler {
-
-    @Override
-    public Response Get(Request request) {
+    private Response buildResponse(Request request) {
         String requestHeaders = "";
         for (Map.Entry<String, String> entry : request.getHeaders().entrySet()) {
             requestHeaders = (entry.getKey() + ": " + entry.getValue() + "\r\n");
@@ -23,17 +21,22 @@ public class TestHandler extends RequestHandler {
     }
 
     @Override
+    public Response Get(Request request) {
+        return buildResponse(request);
+    }
+
+    @Override
     public Response Post(Request request) {
-        return null;
+        return buildResponse(request);
     }
 
     @Override
     public Response Put(Request request) {
-        return null;
+        return buildResponse(request);
     }
 
     @Override
     public Response Delete(Request request) {
-        return null;
+        return buildResponse(request);
     }
 }

@@ -5,18 +5,18 @@ import java.io.IOException;
 
 public class HttpException extends IOException {
 
-   private HttpError error;
+   private HttpStatus error;
 
-    public HttpException(HttpError error) {
+    public HttpException(HttpStatus error) {
         this.error = error;
     }
 
 
-    public HttpError getError() {
+    public HttpStatus getError() {
         return error;
     }
 
-    public void setError(HttpError error) {
+    public void setError(HttpStatus error) {
         this.error = error;
     }
 

@@ -32,7 +32,7 @@ public class SocketProcessor implements Runnable {
         } catch (HttpException e) {
             response = buildExceptionResponse(e);
         } catch (Exception e) {
-            response = buildExceptionResponse(new HttpException(HttpError.SC_INTERNAL_SERVER_ERROR));
+            response = buildExceptionResponse(new HttpException(HttpStatus.SC_INTERNAL_SERVER_ERROR));
         }
 
         try {
